@@ -42,19 +42,29 @@ void PlainColorPicker::resizeEvent(QResizeEvent *event)
 {
     QSize size = event->size();
 
-    gradient.setStart(QPointF(0, 0));
-    gradient.setFinalStop(QPointF(size.width(), 0));
-
-    if(size.width() > 2 * size.height() + 2)
+    if(size.width() >= 40)
     {
-        gradient_rect = QRect(0, 0, width() - (2 + size.height()) - 1, size.height() - 1);
-        color_rect = QRect(gradient_rect.width() + 2, 0, size.height() - 1, size.height() - 1);
+		if(size.width() > 2 * size.height() + 2)
+		{
+			gradient_rect = QRect(0, 0, width() - (2 + size.height()) - 1, size.height() - 1);
+			color_rect = QRect(gradient_rect.width() + 2, 0, size.height() - 1, size.height() - 1);
+		}
+		else
+		{
+			const int color_rect_width = size.width() / 2;
+			
+			gradient_rect = QRect(0, 0, width() - (2 + color_rect_width) - 1, size.height() - 1);
+			color_rect = QRect(gradient_rect.width() + 2, 0, color_rect_width - 1, size.height() - 1);
+		}
     }
     else
     {
-        gradient_rect = QRect(0, 0, size.width() - 1, size.height() - 1);
+        gradient_rect = QRect(0, 0, std::max(size.width() - 1, 0), std::max(size.height() - 1, 0));
         color_rect = QRect(0, 0, 0, 0);
     }
+    
+    gradient.setStart(QPointF(gradient_rect.x(), 0));
+    gradient.setFinalStop(QPointF(gradient_rect.x() + gradient_rect.width(), 0));
 }
 
 void PlainColorPicker::mousePressEvent(QMouseEvent *)
